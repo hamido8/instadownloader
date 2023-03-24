@@ -1,0 +1,39 @@
+import requests
+import json
+import telegram
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+
+def start(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Hello, join to our channel (  @hertz417  ) to continue.")
+
+def instadownloader(update, context):
+    link = update.message.text
+    url = "https://instagram-downloader-download-instagram-videos-stories.p.rapidapi.com/index"
+
+    querystring = {"url":link}
+
+    headers = {
+        "X-RapidAPI-Key": "a3282214bcmshe9866021d8ae725p1239d8jsnc5786ea44382",
+        "X-RapidAPI-Host": "instagram-downloader-download-instagram-videos-stories.p.rapidapi.com"
+    }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    rest = json.loads(response.text)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=rest)
+
+def main():
+    # Replace with your own Telegram bot token
+    token = "6044987201:AAGiSyFeHIKo3FZLZ9ou7XudtJthTAviQr4"
+    updater = Updater(token=token, use_context=True)
+    dispatcher = updater.dispatcher
+
+    start_handler = CommandHandler('start', start)
+    dispatcher.add_handler(start_handler)
+
+    instadownloader_handler = MessageHandler(Filters.text & (~Filters.command), instadownloader)
+    dispatcher.add_handler(instadownloader_handler)
+
+    updater.start_polling()
+
+if __name__ == '__main__':
+    main()
